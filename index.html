@@ -1,0 +1,330 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>𝗨𝗡𝗗𝗘𝗥 𝟯/𝟰 𝗟𝗘𝗩𝗘𝗟 𝗙𝗜𝗫𝗫 𝗛𝗔𝗖𝗞 — PRO MAX</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        :root { 
+            --glass: rgba(0, 150, 255, 0.1);
+            --border: rgba(0, 191, 255, 0.4);
+            --neon-blue: #00d4ff;
+            --neon-red: #ff003c;
+            --gold: #ffea00;
+        }
+
+        body, html {
+            height: 100%; margin: 0; font-family: 'Segoe UI', sans-serif;
+            background: #00040a; color: #fff; overflow-x: hidden; user-select: none;
+        }
+
+        #introScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #00040a; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 10000;
+            transition: opacity 0.8s ease-out;
+        }
+        .intro-line {
+            font-size: clamp(24px, 8vw, 42px);
+            font-weight: 900; letter-spacing: 4px; white-space: nowrap;
+            text-transform: uppercase; border-right: 4px solid var(--neon-red);
+            padding-right: 10px; animation: typing 2s steps(20), blink 0.5s step-end infinite;
+            overflow: hidden; text-shadow: 0 0 15px var(--neon-blue);
+        }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink { from, to { border-color: transparent } 50% { border-color: var(--neon-red) } }
+
+        .app-frame { max-width: 480px; margin: auto; padding: 15px; }
+        
+        .logo-box {
+            width: 150px; height: 150px; margin: 0 auto 20px auto;
+            border-radius: 20px; border: 2px solid var(--neon-blue);
+            box-shadow: 0 0 20px var(--neon-blue); overflow: hidden;
+        }
+        .logo-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .glass-card {
+            background: var(--glass); backdrop-filter: blur(15px);
+            border: 1px solid var(--border); border-radius: 20px;
+            padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+        }
+
+        .header { text-align: center; border-bottom: 2px solid var(--neon-red); padding-bottom: 10px; margin-bottom: 20px; }
+        .pred-val { font-size: 75px; font-weight: 900; text-shadow: 0 0 20px var(--neon-blue); margin: 10px 0; }
+        .timer-display { font-size: 24px; color: var(--gold); font-weight: bold; }
+        .status-info { display: flex; justify-content: space-between; font-size: 11px; color: var(--neon-blue); margin-bottom: 10px;}
+        .strat-mode { font-size: 11px; font-weight: 700; background: rgba(0, 212, 255, 0.2); padding: 6px 12px; border-radius: 8px; color: var(--neon-blue); border: 1px solid var(--neon-blue); margin-bottom: 10px; display: inline-block; }
+        .lvl-badge { background: rgba(255, 0, 60, 0.2); border: 1px solid var(--neon-red); padding: 8px; border-radius: 10px; font-weight: bold; margin: 15px 0; font-size: 13px; }
+        .num-row { display: flex; justify-content: center; gap: 20px; }
+        .num-circle { width: 45px; height: 45px; line-height: 45px; border: 2px solid var(--gold); border-radius: 50%; font-weight: 900; background: rgba(0,0,0,0.4); color: var(--gold); }
+
+        input { 
+            width: 80%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); 
+            border-radius: 10px; color: #fff; text-align: center; outline: none; margin-bottom: 15px;
+        }
+        .btn-glow {
+            width: 90%; padding: 15px; background: linear-gradient(90deg, #0082ff, #00d4ff);
+            border: none; border-radius: 10px; color: white; font-weight: 900; cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5); text-transform: uppercase;
+        }
+
+        .history-wrap { max-height: 250px; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        th { color: var(--neon-blue); padding: 10px; border-bottom: 1px solid var(--border); }
+        td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; }
+        .win { color: #00ff41; font-weight: bold; }
+        .loss { color: #ff003c; font-weight: bold; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="introScreen">
+        <div class="intro-line">RABBI<span style="color:var(--neon-red)">VAI AI VIP HACK</span></div>
+        <p style="color: var(--neon-blue); letter-spacing: 2px; margin-top: 20px; font-size: 10px;">ULTRA HYBRID ENGINE 9.0</p>
+    </div>
+
+    <div id="mainWrapper" class="hidden">
+        <div class="app-frame">
+            <div class="header">
+                <span style="font-size: 24px; font-weight: 900;">𝗨𝗡𝗗𝗘𝗥 𝟯/𝟰<span style="color:var(--neon-blue)">  𝗟𝗘𝗩𝗘𝗟 𝗙𝗜𝗫𝗫 𝗛𝗔𝗖𝗞 😎</span></span>
+            </div>
+
+            <div id="logoArea" class="logo-box">
+                <img src="https://i.postimg.cc/N0HVnscN/IMG-20260527-133633-482.jpg" alt="LOGO">
+            </div>
+
+            <div id="loginSection" class="glass-card" style="text-align: center;">
+                <input type="text" id="keyInput" placeholder="ENTER ACCESS KEY">
+                <button class="btn-glow" id="loginBtn" onclick="checkAccess()">VERIFY KEY</button>
+                <p id="msg" style="color: #ff003c; font-size: 12px; margin-top: 10px;"></p>
+            </div>
+
+            <div id="hackSection" class="hidden">
+                <div class="status-info">
+                    <span>● STATUS: CONNECTED</span>
+                    <span id="pingVal">EXPIRY: ---</span>
+                </div>
+                
+                <div class="glass-card" style="text-align: center;">
+                    <div id="stratDisplay" class="strat-mode">MODE: HYBRID AI ANALYZING...</div>
+                    <div id="timer" class="timer-display">00:60</div>
+                    <div id="pID" style="color: rgba(255,255,255,0.4); font-size: 11px; margin-bottom: 5px;">PERIOD: ---</div>
+                    <div id="pRes" class="pred-val">WAIT</div>
+                    <div id="mLevel" class="lvl-badge">MARTINGALE: LEVEL 1</div>
+                    <div style="font-size: 10px; color: var(--gold); margin-bottom: 5px;">HIGH PROBABILITY DIGITS:</div>
+                    <div class="num-row" id="numRow">
+                        <div class="num-circle">?</div>
+                        <div class="num-circle">?</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="history-wrap">
+                        <table>
+                            <thead><tr><th>PERIOD</th><th>PRED</th><th>RESULT</th><th>STATUS</th></tr></thead>
+                            <tbody id="logs"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyDjE2fP_QipdiqKN0JZGPyTB1M3VB8p1UE",
+        authDomain: "owner-imran.firebaseapp.com",
+        databaseURL: "https://owner-imran-default-rtdb.firebaseio.com",
+        projectId: "owner-imran",
+        storageBucket: "owner-imran.firebasestorage.app",
+        messagingSenderId: "614067388203",
+        appId: "1:614067388203:web:142cdd8becd0e2360c8f6e"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Device Identification Logic
+    let deviceId = localStorage.getItem('device_id');
+    if(!deviceId){
+        deviceId = 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        localStorage.setItem('device_id', deviceId);
+    }
+
+    async function checkAccess() {
+        const key = document.getElementById('keyInput').value.trim();
+        const msg = document.getElementById('msg');
+        if(!key) return;
+
+        // Custom Local Key Override (Key: 5555)
+        if(key === "5555") {
+            startHack("UNLIMITED");
+            return;
+        }
+
+        db.ref('premium_keys/' + key).once('value', snapshot => {
+            const data = snapshot.val();
+            if(!data) {
+                msg.innerText = "INVALID KEY!";
+                return;
+            }
+
+            const now = Date.now();
+            if(data.expiry !== "UNLIMITED" && now > data.expiry) {
+                msg.innerText = "KEY EXPIRED!";
+                return;
+            }
+
+            let currentDevices = data.devices || {};
+            let deviceCount = Object.keys(currentDevices).length;
+
+            if(!currentDevices[deviceId]) {
+                if(data.limitDevices !== "UNLIMITED" && deviceCount >= parseInt(data.limitDevices)) {
+                    msg.innerText = "DEVICE LIMIT REACHED!";
+                    return;
+                }
+                db.ref('premium_keys/' + key + '/devices/' + deviceId).set(true);
+            }
+
+            startHack(data.expiry);
+        });
+    }
+
+    function startHack(expiryTime) {
+        document.getElementById('loginSection').classList.add('hidden');
+        document.getElementById('logoArea').classList.add('hidden');
+        document.getElementById('hackSection').classList.remove('hidden');
+
+        if(expiryTime !== "UNLIMITED") {
+            setInterval(() => {
+                if(Date.now() > expiryTime) location.reload();
+            }, 10000);
+            const date = new Date(expiryTime);
+            document.getElementById('pingVal').innerText = "EXP: " + date.toLocaleDateString();
+        } else {
+            document.getElementById('pingVal').innerText = "EXP: LIFETIME";
+        }
+
+        syncEngine();
+        setInterval(syncEngine, 2000);
+        startClock();
+    }
+
+    // --- ENHANCED ULTRA PREDICTION LOGIC ENGINE ---
+    const API = "https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json";
+    let lastP = null, nextP = null, targetNums = [], currentLevel = 1;
+    const sWin = new Audio('https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3');
+    const sLoss = new Audio('https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3');
+    const sDing = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+
+    function startClock() {
+        setInterval(() => {
+            const rem = 60 - new Date().getSeconds();
+            document.getElementById('timer').innerText = `00:${rem < 10 ? '0' + rem : rem}`;
+            if(rem === 5) sDing.play().catch(()=>{});
+            document.getElementById('timer').style.color = rem <= 5 ? "#ff003c" : "#ffea00";
+        }, 1000);
+    }
+
+    async function syncEngine() {
+        try {
+            const r = await fetch(API + '?t=' + Date.now());
+            const d = await r.json();
+            const top = d.data.list[0];
+            processHybrid(top.issueNumber, parseInt(top.number), d.data.list);
+        } catch (e) {}
+    }
+
+    function processHybrid(p, num, list) {
+        const actual = num >= 5 ? "BIG" : "SMALL";
+        if (lastP !== p) {
+            if (nextP && lastP) {
+                const win = (nextP === actual) || targetNums.includes(num);
+                if(win) { sWin.play().catch(()=>{}); currentLevel = 1; }
+                else { sLoss.play().catch(()=>{}); currentLevel++; if(currentLevel > 4) currentLevel = 1; }
+                const multiplier = currentLevel === 1 ? "1X" : (currentLevel === 2 ? "3X" : (currentLevel === 3 ? "9X" : "27X"));
+                document.getElementById('mLevel').innerText = `MARTINGALE: LEVEL ${currentLevel} (${multiplier})`;
+                const row = `<tr><td>${p.slice(-3)}</td><td>${nextP}</td><td>${actual}(${num})</td><td class="${win?'win':'loss'}">${win?'WIN':'LOSS'}</td></tr>`;
+                document.getElementById('logs').innerHTML = row + document.getElementById('logs').innerHTML;
+            }
+            lastP = p;
+
+            // --- DEEP 10-DRAWS MULTI-PATTERN ENGINE ---
+            const last10 = list.slice(0, 10).map(x => parseInt(x.number) >= 5 ? "BIG" : "SMALL");
+            const last10Nums = list.slice(0, 10).map(x => parseInt(x.number));
+
+            let predictedSide = "";
+            let modeText = "";
+            let confidence = 85;
+
+            // 1. Dragon Streak Detection (3+ in a row)
+            if (last10[0] === last10[1] && last10[1] === last10[2]) {
+                predictedSide = last10[0];
+                modeText = "MODE: DRAGON STREAK 🔥";
+                confidence = 95;
+            } 
+            // 2. Zig-Zag 1by1 Pattern (B-S-B-S or S-B-S-B)
+            else if (last10[0] !== last10[1] && last10[1] !== last10[2] && last10[2] !== last10[3]) {
+                predictedSide = (last10[0] === "BIG") ? "SMALL" : "BIG";
+                modeText = "MODE: ZIG-ZAG PATTERN ⚡";
+                confidence = 92;
+            } 
+            // 3. Double-Double 2by2 Pattern (BB-SS or SS-BB)
+            else if (last10[0] === last10[1] && last10[1] !== last10[2] && last10[2] === last10[3]) {
+                predictedSide = (last10[0] === "BIG") ? "SMALL" : "BIG";
+                modeText = "MODE: 2-BY-2 PATTERN 🔄";
+                confidence = 89;
+            } 
+            // 4. Overbought / Oversold Trend Reversal
+            else {
+                const bigCount = last10.slice(0, 6).filter(x => x === "BIG").length;
+                if (bigCount >= 4) {
+                    predictedSide = "SMALL";
+                    modeText = "MODE: OVERBOUGHT REVERSAL 🎯";
+                    confidence = 88;
+                } else if (bigCount <= 2) {
+                    predictedSide = "BIG";
+                    modeText = "MODE: OVERSOLD REVERSAL 🎯";
+                    confidence = 88;
+                } else {
+                    predictedSide = (last10[0] === "BIG") ? "SMALL" : "BIG";
+                    modeText = "MODE: SMART HYBRID AI 🧠";
+                    confidence = 84;
+                }
+            }
+
+            nextP = predictedSide;
+
+            // Smart Digit Frequency Analyser (Picking most frequent hot digits)
+            const freq = {};
+            for(let i=0; i<10; i++) {
+                let n = last10Nums[i];
+                freq[n] = (freq[n] || 0) + 1;
+            }
+            
+            if (nextP === "BIG") {
+                targetNums = [5, 6, 7, 8, 9].sort((a,b) => (freq[b]||0) - (freq[a]||0)).slice(0, 2);
+            } else {
+                targetNums = [0, 1, 2, 3, 4].sort((a,b) => (freq[b]||0) - (freq[a]||0)).slice(0, 2);
+            }
+
+            document.getElementById('stratDisplay').innerText = `${modeText} [${confidence}%]`;
+            document.getElementById('pID').innerText = "PERIOD: " + (BigInt(p) + 1n).toString();
+            document.getElementById('pRes').innerText = nextP;
+            document.getElementById('pRes').style.color = nextP === "BIG" ? "#ffea00" : "#00ff41";
+            document.getElementById('numRow').innerHTML = `<div class="num-circle">${targetNums[0]}</div><div class="num-circle">${targetNums[1]}</div>`;
+        }
+    }
+
+    window.onload = () => {
+        setTimeout(() => {
+            document.getElementById('introScreen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('introScreen').classList.add('hidden');
+                document.getElementById('mainWrapper').classList.remove('hidden');
+            }, 800);
+        }, 3000);
+    };
+</script>
+
+</body></html>
