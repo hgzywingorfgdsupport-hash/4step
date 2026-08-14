@@ -76,13 +76,38 @@
         .win { color: #00ff41; font-weight: bold; }
         .loss { color: #ff003c; font-weight: bold; }
         .hidden { display: none !important; }
+
+        /* Expired Pop-up Style */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 4, 10, 0.95); display: flex;
+            justify-content: center; align-items: center; z-index: 20000; text-align: center;
+        }
+        .telegram-btn {
+            display: inline-block; width: 85%; padding: 14px; background: #0088cc;
+            color: #fff; text-decoration: none; font-weight: bold; border-radius: 10px;
+            box-shadow: 0 0 15px #0088cc; text-transform: uppercase; font-size: 13px; margin-top: 15px;
+        }
     </style>
 </head>
 <body>
 
     <div id="introScreen">
-        <div class="intro-line">RABBI<span style="color:var(--neon-red)">VAI AI VIP HACK</span></div>
+        <div class="intro-line">RIFAT - <span style="color:var(--neon-red)">AI VIP HACK</span></div>
         <p style="color: var(--neon-blue); letter-spacing: 2px; margin-top: 20px; font-size: 10px;">ULTRA HYBRID ENGINE 9.0</p>
+    </div>
+
+    <!-- EXPIRED POPUP MODAL -->
+    <div id="expiredModal" class="modal-overlay hidden">
+        <div class="glass-card" style="max-width: 320px; width: 85%; border: 2px solid var(--neon-red); box-shadow: 0 0 25px var(--neon-red);">
+            <h2 style="color: var(--neon-red); margin-top: 0; letter-spacing: 1px;">⚠️ ACCESS EXPIRED</h2>
+            <p style="font-size: 13px; color: #ddd; margin-bottom: 10px; line-height: 1.5;">
+                এই টুলটির মেয়াদের তারিখ ও সময় পার হয়ে গেছে! নতুন অ্যাক্সেসের জন্য টেলিগ্রাম চ্যানেলে জয়েন করুন।
+            </p>
+            <a id="telegramBtn" href="#" target="_blank" class="telegram-btn">
+                📲 JOIN TELEGRAM CHANNEL
+            </a>
+        </div>
     </div>
 
     <div id="mainWrapper" class="hidden">
@@ -92,7 +117,7 @@
             </div>
 
             <div id="logoArea" class="logo-box">
-                <img src="https://i.postimg.cc/N0HVnscN/IMG-20260527-133633-482.jpg" alt="LOGO">
+                <img src="https://i.postimg.cc/yx4hpBTM/IMG-20260813-185049-932.jpg" alt="LOGO">
             </div>
 
             <div id="loginSection" class="glass-card" style="text-align: center;">
@@ -132,6 +157,13 @@
     </div>
 
 <script>
+    // =========================================================
+    // ⚙️ মেয়াদের তারিখ, সময় এবং টেলিগ্রাম লিঙ্ক এখানে সেট করুন
+    // =========================================================
+    const EXPIRE_DATE_TIME = "2026-12-31T23:59:00"; // Format: YYYY-MM-DDTHH:mm:ss
+    const TELEGRAM_LINK = "https://t.me/rifat_developer"; // আপনার টেলিগ্রাম লিঙ্ক
+    // =========================================================
+
     const firebaseConfig = {
         apiKey: "AIzaSyDjE2fP_QipdiqKN0JZGPyTB1M3VB8p1UE",
         authDomain: "owner-imran.firebaseapp.com",
@@ -151,13 +183,34 @@
         localStorage.setItem('device_id', deviceId);
     }
 
+    // Expiry Modal Handler
+    function triggerExpiredModal() {
+        document.getElementById('hackSection').classList.add('hidden');
+        document.getElementById('loginSection').classList.add('hidden');
+        document.getElementById('logoArea').classList.add('hidden');
+        document.getElementById('telegramBtn').href = TELEGRAM_LINK;
+        document.getElementById('expiredModal').classList.remove('hidden');
+    }
+
+    function checkSystemExpiry() {
+        if (!EXPIRE_DATE_TIME) return false;
+        const expTime = new Date(EXPIRE_DATE_TIME).getTime();
+        if (!isNaN(expTime) && Date.now() > expTime) {
+            triggerExpiredModal();
+            return true;
+        }
+        return false;
+    }
+
     async function checkAccess() {
+        if (checkSystemExpiry()) return;
+
         const key = document.getElementById('keyInput').value.trim();
         const msg = document.getElementById('msg');
         if(!key) return;
 
         // Custom Local Key Override (Key: 5555)
-        if(key === "5555") {
+        if(key === "185") {
             startHack("UNLIMITED");
             return;
         }
@@ -170,7 +223,7 @@
             }
 
             const now = Date.now();
-            if(data.expiry !== "UNLIMITED" && now > data.expiry) {
+            if(data.expiry !== "COMING-SOON" && now > data.expiry) {
                 msg.innerText = "KEY EXPIRED!";
                 return;
             }
@@ -191,9 +244,14 @@
     }
 
     function startHack(expiryTime) {
+        if (checkSystemExpiry()) return;
+
         document.getElementById('loginSection').classList.add('hidden');
         document.getElementById('logoArea').classList.add('hidden');
         document.getElementById('hackSection').classList.remove('hidden');
+
+        // Continuous Live Checking for System Expiry
+        setInterval(checkSystemExpiry, 2000);
 
         if(expiryTime !== "UNLIMITED") {
             setInterval(() => {
@@ -202,7 +260,8 @@
             const date = new Date(expiryTime);
             document.getElementById('pingVal').innerText = "EXP: " + date.toLocaleDateString();
         } else {
-            document.getElementById('pingVal').innerText = "EXP: LIFETIME";
+            const sysExp = new Date(EXPIRE_DATE_TIME);
+            document.getElementById('pingVal').innerText = "EXP: " + sysExp.toLocaleDateString();
         }
 
         syncEngine();
@@ -322,6 +381,7 @@
             setTimeout(() => {
                 document.getElementById('introScreen').classList.add('hidden');
                 document.getElementById('mainWrapper').classList.remove('hidden');
+                checkSystemExpiry();
             }, 800);
         }, 3000);
     };
