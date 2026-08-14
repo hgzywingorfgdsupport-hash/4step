@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Protected Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0d1117;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* মূল লগইন কার্ড */
+        .login-card {
+            background-color: #161b22;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            text-align: center;
+            width: 320px;
+            border: 1px solid #30363d;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 6px;
+            border: 1px solid #30363d;
+            background: #0d1117;
+            color: white;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #238636;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background-color: #2ea043;
+        }
+
+        #error-msg {
+            color: #f85149;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        /* 🔔 পপআপ মোডাল (Popup Modal) ডিজাইন */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-box {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            width: 300px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-box h3 {
+            color: #f85149;
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .modal-box p {
+            color: #c9d1d9;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        /* ✈️ টেলিগ্রাম বাটন স্টাইল */
+        .telegram-btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            background-color: #0088cc;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            box-sizing: border-box;
+            transition: background 0.2s;
+        }
+
+        .telegram-btn:hover {
+            background-color: #0077b5;
+        }
+
+        .close-btn {
+            margin-top: 12px;
+            background: transparent;
+            border: 1px solid #30363d;
+            color: #8b949e;
+            font-size: 13px;
+            padding: 8px;
+        }
+
+        .close-btn:hover {
+            background: #21262d;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- লগইন কার্ড -->
+    <div class="login-card">
+        <h2>পাসওয়ার্ড দিন</h2>
+        <input type="password" id="passInput" placeholder="Enter Password">
+        <button onclick="checkAccess()">প্রবেশ করুন</button>
+        <p id="error-msg">❌ ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।</p>
+    </div>
+
+    <!-- 🔔 মেয়াদ শেষের পপআপ মোডাল -->
+    <div class="modal-overlay" id="expiredModal">
+        <div class="modal-box">
+            <h3>⚠️ মেয়াদ শেষ!</h3>
+            <p>আপনার এই পেজটির এক্সেস মেয়াদ পার হয়ে গেছে। নতুন এক্সেস পেতে এডমিনের সাথে যোগাযোগ করুন।</p>
+            
+            <!-- টেলিগ্রাম লিংক -->
+            <a href="#" id="telegramLink" target="_blank" class="telegram-btn">
+                ✈️ Admin-এর সাথে যোগাযোগ করুন
+            </a>
+            
+            <button class="close-btn" onclick="closeModal()">বন্ধ করুন</button>
+        </div>
+    </div>
+
+    <script>
+        // 🔑 ১. আপনার পাসওয়ার্ড সেট করুন
+        const CORRECT_PASSWORD = "mysecretpass123"; 
+
+        // ⏰ ২. মেয়াদ শেষের তারিখ সেট করুন (YYYY-MM-DDTHH:MM:SS)
+        const EXPIRY_DATE = new Date("2026-12-31T23:59:59"); 
+
+        // 📲 ৩. আপনার টেলিগ্রাম ইউজারনেম/লিংক বসান
+        const TELEGRAM_URL = "https://t.me/your_admin_username"; 
+
+        // টেলিগ্রাম বাটন লিংক সেটআপ
+        document.getElementById("telegramLink").href = TELEGRAM_URL;
+
+        function checkAccess() {
+            const inputPass = document.getElementById("passInput").value;
+            const errorMsg = document.getElementById("error-msg");
+            const currentDate = new Date();
+
+            // ⚠️ ১. মেয়াদ শেষ হয়ে গেছে কিনা চেক করা
+            if (currentDate > EXPIRY_DATE) {
+                showModal();
+                return;
+            }
+
+            // 🔑 ২. পাসওয়ার্ড সঠিক কিনা চেক করা
+            if (inputPass === CORRECT_PASSWORD) {
+                window.location.href = "index.html"; 
+            } else {
+                errorMsg.style.display = "block";
+            }
+        }
+
+        // পপআপ খোলার ফাংশন
+        function showModal() {
+            document.getElementById("expiredModal").classList.add("active");
+        }
+
+        // পপআপ বন্ধ করার ফাংশন
+        function closeModal() {
+            document.getElementById("expiredModal").classList.remove("active");
+        }
+    </script>
+
+</body>
+</html>
