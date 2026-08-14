@@ -80,8 +80,8 @@
         /* Expired Pop-up Style */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 4, 10, 0.95); display: flex;
-            justify-content: center; align-items: center; z-index: 20000; text-align: center;
+            background: rgba(0, 4, 10, 0.96); display: flex;
+            justify-content: center; align-items: center; z-index: 99999; text-align: center;
         }
         .telegram-btn {
             display: inline-block; width: 85%; padding: 14px; background: #0088cc;
@@ -102,10 +102,10 @@
         <div class="glass-card" style="max-width: 320px; width: 85%; border: 2px solid var(--neon-red); box-shadow: 0 0 25px var(--neon-red);">
             <h2 style="color: var(--neon-red); margin-top: 0; letter-spacing: 1px;">⚠️ ACCESS EXPIRED</h2>
             <p style="font-size: 13px; color: #ddd; margin-bottom: 10px; line-height: 1.5;">
-                এই টুলটির মেয়াদের তারিখ ও সময় পার হয়ে গেছে! নতুন অ্যাক্সেসের জন্য টেলিগ্রাম চ্যানেলে জয়েন করুন।
+                এই টুলটির মেয়াদের সময় শেষ হয়ে গেছে! নতুন অ্যাক্সেসের জন্য নিচের লিংকে ক্লিক করে আমাদের Admin এর সাথে যোগাযোগ করুন 
             </p>
             <a id="telegramBtn" href="#" target="_blank" class="telegram-btn">
-                📲 JOIN TELEGRAM CHANNEL
+                📲 CONTACT ADMIN 
             </a>
         </div>
     </div>
@@ -160,8 +160,9 @@
     // =========================================================
     // ⚙️ মেয়াদের তারিখ, সময় এবং টেলিগ্রাম লিঙ্ক এখানে সেট করুন
     // =========================================================
-    const EXPIRE_DATE_TIME = "2026-08-13T23:59:00"; // Format: YYYY-MM-DDTHH:mm:ss
-    const TELEGRAM_LINK = "https://t.me/rifat_developer"; // আপনার টেলিগ্রাম লিঙ্ক
+    // ফরম্যাট: "YYYY-MM-DDTHH:mm:ss" (যেমন: "2025-01-01T00:00:00" দিয়ে টেস্ট করতে পারেন)
+    const EXPIRE_DATE_TIME = "2026-08-16T00:00:00"; 
+    const TELEGRAM_LINK = "https://t.me/rifat_developer"; // আপনার টেলিগ্রাম লিংক
     // =========================================================
 
     const firebaseConfig = {
@@ -183,20 +184,18 @@
         localStorage.setItem('device_id', deviceId);
     }
 
-    // Expiry Modal Handler
-    function triggerExpiredModal() {
-        document.getElementById('hackSection').classList.add('hidden');
-        document.getElementById('loginSection').classList.add('hidden');
-        document.getElementById('logoArea').classList.add('hidden');
-        document.getElementById('telegramBtn').href = TELEGRAM_LINK;
-        document.getElementById('expiredModal').classList.remove('hidden');
-    }
-
+    // Expiry Checking Engine
     function checkSystemExpiry() {
         if (!EXPIRE_DATE_TIME) return false;
+        
         const expTime = new Date(EXPIRE_DATE_TIME).getTime();
-        if (!isNaN(expTime) && Date.now() > expTime) {
-            triggerExpiredModal();
+        const currentTime = Date.now();
+
+        if (!isNaN(expTime) && currentTime > expTime) {
+            document.getElementById('mainWrapper').classList.add('hidden');
+            document.getElementById('introScreen').classList.add('hidden');
+            document.getElementById('telegramBtn').href = TELEGRAM_LINK;
+            document.getElementById('expiredModal').classList.remove('hidden');
             return true;
         }
         return false;
@@ -250,7 +249,7 @@
         document.getElementById('logoArea').classList.add('hidden');
         document.getElementById('hackSection').classList.remove('hidden');
 
-        // Continuous Live Checking for System Expiry
+        // Continuous Checking
         setInterval(checkSystemExpiry, 2000);
 
         if(expiryTime !== "UNLIMITED") {
@@ -376,12 +375,12 @@
     }
 
     window.onload = () => {
+        if (checkSystemExpiry()) return;
         setTimeout(() => {
             document.getElementById('introScreen').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('introScreen').classList.add('hidden');
                 document.getElementById('mainWrapper').classList.remove('hidden');
-                checkSystemExpiry();
             }, 800);
         }, 3000);
     };
